@@ -63,7 +63,7 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 		res.json({
 			_id: exercise.createdBy,
 			username,
-			date: exercise.enteredDate,
+			date,
 			duration: Number(duration),
 			description,
 		});
@@ -90,7 +90,7 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 	}
 });
 
-app.get('/api/users/:_id/logs?', (req, res) => {
+app.get('/api/users/:_id/logs', (req, res) => {
 	const userId = req.params._id;
 
 	const findExercises = async (user_id, userName) => {
