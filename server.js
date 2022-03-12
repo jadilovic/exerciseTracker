@@ -128,6 +128,14 @@ app.get('/api/users/:_id/logs?', (req, res) => {
 	}
 });
 
+app.get('/api/users', (req, res) => {
+	const getUsers = async () => {
+		const users = await User.find({});
+		res.json(users);
+	};
+	getUsers();
+});
+
 const port = process.env.PORT || 3000;
 
 const start = async () => {
