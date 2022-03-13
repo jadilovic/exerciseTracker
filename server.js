@@ -45,10 +45,11 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 	const createExercise = async (username) => {
 		let date;
 		if (enteredDate) {
-			date = new Date(enteredDate);
-			if (date === 'Invalid Date') {
+			const regex = /^\d{4}-\d{2}-\d{2}$/;
+			if (enteredDate.match(regex) === null) {
 				date = new Date(0);
-				console.log(date);
+			} else {
+				date = new Date(enteredDate);
 			}
 		} else {
 			date = new Date(0);
