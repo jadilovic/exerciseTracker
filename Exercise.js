@@ -10,8 +10,8 @@ const ExerciseSchema = mongoose.Schema(
 			type: Number,
 			required: [true, 'Please enter duration'],
 		},
-		enteredDate: {
-			type: String,
+		date: {
+			type: Date,
 		},
 		createdBy: {
 			type: mongoose.Types.ObjectId,

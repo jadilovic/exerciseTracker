@@ -43,27 +43,27 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 	const enteredDate = req.body.date;
 
 	const createExercise = async (username) => {
-		let date = '';
+		let date;
 		if (enteredDate) {
-			date = new Date(enteredDate).toDateString();
+			date = new Date(enteredDate);
 			console.log(date);
 			if (date === 'Invalid Date') {
-				date = new Date(0).toDateString();
+				date = new Date(0);
 				console.log(date);
 			}
 		} else {
-			date = new Date(0).toDateString();
+			date = new Date(0);
 		}
 		const exercise = await Exercise.create({
 			description,
 			duration,
-			enteredDate: date,
+			date,
 			createdBy: userId,
 		});
 		res.json({
 			_id: exercise.createdBy,
 			username,
-			date,
+			date: date.toDateString(),
 			duration: Number(duration),
 			description,
 		});
@@ -90,25 +90,41 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 	}
 });
 
-app.get('/api/users/:_id/logs', (req, res) => {
+app.get('/api/users/:_id/logs?', (req, res) => {
 	const userId = req.params._id;
-
+	console.log('qurey : ', req.query);
+	const { from, to, limit } = req.query;
 	const findExercises = async (user_id, userName) => {
-		const exercises = await Exercise.find({ createdBy: user_id });
-		const exerciseList = [];
+		let dateObj = {};
+		if (from) {
+			dateObj['$gte'] = new Date(from);
+		}
+		if (to) {
+			dateObj['$lte'] = new Date(to);
+		}
+		let filter = {
+			createdBy: userId,
+		};
+		if (from || to) {
+			filter.date = dateObj;
+		}
+		let nonNullLimit = limit ?? 500;
+		const exercises = await Exercise.find(filter).limit(nonNullLimit).exec();
+		console.log('exercises : ', exercises);
+		const log = [];
 		exercises.forEach((exercise) => {
-			exerciseList.push({
+			log.push({
 				description: exercise.description,
 				duration: exercise.duration,
-				date: exercise.enteredDate,
+				date: exercise.date.toDateString(),
 			});
 		});
-		console.log(exerciseList);
+		console.log(log);
 		res.json({
 			username: userName,
-			count: exerciseList.length,
+			count: log.length,
 			_id: user_id,
-			log: exerciseList,
+			log,
 		});
 	};
 
