@@ -46,7 +46,6 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 		let date;
 		if (enteredDate) {
 			date = new Date(enteredDate);
-			console.log(date);
 			if (date === 'Invalid Date') {
 				date = new Date(0);
 				console.log(date);
@@ -92,7 +91,6 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 
 app.get('/api/users/:_id/logs?', (req, res) => {
 	const userId = req.params._id;
-	console.log('qurey : ', req.query);
 	const { from, to, limit } = req.query;
 	const findExercises = async (user_id, userName) => {
 		let dateObj = {};
@@ -110,16 +108,22 @@ app.get('/api/users/:_id/logs?', (req, res) => {
 		}
 		let nonNullLimit = limit ?? 500;
 		const exercises = await Exercise.find(filter).limit(nonNullLimit).exec();
-		console.log('exercises : ', exercises);
 		const log = [];
 		exercises.forEach((exercise) => {
+			let exerciseDate;
+			console.log('date : ', exercise.date);
+			if (exercise.date === '' || exercise.date === undefined) {
+				exerciseDate = new Date(0).toDateString();
+			} else {
+				exerciseDate = exercise.date.toDateString();
+			}
+			console.log('string date : ', exerciseDate);
 			log.push({
 				description: exercise.description,
 				duration: exercise.duration,
-				date: exercise.date.toDateString(),
+				date: exerciseDate,
 			});
 		});
-		console.log(log);
 		res.json({
 			username: userName,
 			count: log.length,
