@@ -44,6 +44,7 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 
 	const createExercise = async (username) => {
 		let date;
+		console.log('entered date : ', enteredDate);
 		if (enteredDate) {
 			const regex = /^\d{4}-\d{2}-\d{2}$/;
 			if (enteredDate.match(regex) === null) {
@@ -54,6 +55,13 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 		} else {
 			date = new Date(0);
 		}
+		console.log('WHAT1 : ', date);
+		if (date === 'Invalid Date') {
+			console.log('SHOW');
+			date = new Date();
+		}
+		date = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+		console.log('WHAT2 : ', date);
 		const exercise = await Exercise.create({
 			description,
 			duration,
@@ -107,7 +115,7 @@ app.get('/api/users/:_id/logs?', (req, res) => {
 		if (from || to) {
 			filter.date = dateObj;
 		}
-		let nonNullLimit = limit ?? 500;
+		let nonNullLimit = limit ? limit : 500;
 		const exercises = await Exercise.find(filter).limit(nonNullLimit).exec();
 		const log = [];
 		exercises.forEach((exercise) => {
