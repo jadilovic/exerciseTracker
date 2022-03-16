@@ -60,7 +60,7 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 			console.log('SHOW');
 			date = new Date();
 		}
-		date = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+		//	date = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
 		console.log('WHAT2 : ', date);
 		const exercise = await Exercise.create({
 			description,
